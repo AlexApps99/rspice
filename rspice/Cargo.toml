@@ -1,0 +1,12 @@
+[package]
+name = "rspice"
+version = "0.0.1"
+authors = ["AlexApps99"]
+edition = "2018"
+description = "CSPICE for Rust"
+repository = "https://github.com/AlexApps99/rspice"
+keywords = ["astronomy", "space"]
+categories = ["api-bindings", "mathematics", "science", "simulation"]
+
+[dependencies.cspice-sys]
+path = "../cspice-sys/"
