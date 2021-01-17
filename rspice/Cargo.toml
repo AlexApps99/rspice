@@ -7,6 +7,7 @@ description = "CSPICE for Rust"
 repository = "https://github.com/ZoussCity/rspice"
 keywords = ["astronomy", "space", "naif", "cspice", "spice"]
 categories = ["api-bindings", "mathematics", "science", "simulation"]
+exclude = ["/kernels"]
 
 [dependencies.cspice-sys]
 path = "../cspice-sys/"

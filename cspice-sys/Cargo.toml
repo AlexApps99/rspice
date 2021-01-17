@@ -7,6 +7,8 @@ description = "CSPICE Rust bindings"
 repository = "https://github.com/ZoussCity/cspice-sys"
 keywords = ["astronomy", "space", "naif", "cspice", "spice"]
 categories = ["external-ffi-bindings", "mathematics", "science", "simulation"]
+license-file = "DISCLAIMER.txt"
+exclude = ["/kernels"]
 links = "cspice"
 
 [build-dependencies.bindgen]
