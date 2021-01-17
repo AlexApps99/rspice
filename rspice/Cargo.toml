@@ -4,9 +4,16 @@ version = "0.0.1"
 authors = ["AlexApps99"]
 edition = "2018"
 description = "CSPICE for Rust"
-repository = "https://github.com/AlexApps99/rspice"
-keywords = ["astronomy", "space"]
+repository = "https://github.com/ZoussCity/rspice"
+keywords = ["astronomy", "space", "naif", "cspice", "spice"]
 categories = ["api-bindings", "mathematics", "science", "simulation"]
 
 [dependencies.cspice-sys]
 path = "../cspice-sys/"
+
+[dev-dependencies.nalgebra]
+version = "0.24.0"
+
+[features]
+default = ["error"]
+error = []

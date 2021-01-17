@@ -1,5 +1,3 @@
-pub type SResult<T> = Result<T, String>;
-
 pub struct SString(Vec<i8>);
 
 impl SString {
@@ -48,44 +46,78 @@ impl std::convert::TryInto<String> for SString {
     }
 }
 
-macro_rules! cspice_err {
+#[cfg(feature = "error")]
+macro_rules! s_err {
+    ($i:expr) => {
+        s_errn!($i)?
+    };
+}
+
+#[cfg(not(feature = "error"))]
+macro_rules! s_err {
+    ($i:expr) => {
+        unsafe { $i }
+    };
+}
+
+#[cfg(feature = "error")]
+macro_rules! s_errn {
     ($i:expr) => {{
         let r = unsafe { $i };
-        if unsafe { cspice_sys::failed_c() } != 0 {
-            // TODO cspice_sys::getmsg_c
-            unsafe {
-                cspice_sys::reset_c();
-            }
-            Err(String::new())
+        if $crate::failed() {
+            let err = unsafe { $crate::SpiceError::get_unchecked() };
+            $crate::reset();
+            Err(err)
         } else {
             Ok(r)
         }
     }};
 }
 
+#[cfg(not(feature = "error"))]
+macro_rules! s_errn {
+    ($i:expr) => {
+        unsafe { $i }
+    };
+}
+
+#[cfg(feature = "error")]
+macro_rules! s_ok {
+    ($i:expr) => {
+        Ok($i)
+    };
+}
+
+#[cfg(not(feature = "error"))]
+macro_rules! s_ok {
+    ($i:expr) => {
+        $i
+    };
+}
+
 // Macro to help wrap get/set functions
 // $n: Name of function to be defined
 // $f: cspice_sys function to be called
 // $c: thing to get/set
-macro_rules! cspice_sgfn {
+macro_rules! s_sgfn {
     ($n:ident, $f:path, $c:ident) => {
-        pub fn $n(op: &str, lenout: i32, $c: Option<&str>) -> $crate::helper::SResult<String> {
+        pub fn $n(op: &str, lenout: i32, $c: Option<&str>) -> $crate::SpiceResult<String> {
             let mut a = $crate::helper::SString::new(op.as_bytes());
 
             let (b, mut c) = if let Some(cc) = $c {
                 let s = $crate::helper::SString::new(cc.as_bytes());
                 (s.len(), s)
             } else {
-                if lenout <= 1 {
-                    (1, $crate::helper::SString::with_size(1))
+                if lenout < 2 {
+                    (2, $crate::helper::SString::with_size(2))
                 } else {
                     (lenout, $crate::helper::SString::with_size(lenout))
                 }
             };
 
-            cspice_err!($f(a.as_cs(), b, c.as_cs()))?;
+            s_err!($f(a.as_cs(), b, c.as_cs()));
             use std::convert::TryInto;
-            Ok(c.try_into().unwrap())
+            s_ok!(c.try_into().unwrap())
         }
     };
 }

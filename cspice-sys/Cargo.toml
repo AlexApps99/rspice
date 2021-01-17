@@ -4,8 +4,8 @@ version = "0.0.1"
 authors = ["AlexApps99"]
 edition = "2018"
 description = "CSPICE Rust bindings"
-repository = "https://github.com/AlexApps99/cspice-sys"
-keywords = ["astronomy", "space"]
+repository = "https://github.com/ZoussCity/cspice-sys"
+keywords = ["astronomy", "space", "naif", "cspice", "spice"]
 categories = ["external-ffi-bindings", "mathematics", "science", "simulation"]
 links = "cspice"
 
