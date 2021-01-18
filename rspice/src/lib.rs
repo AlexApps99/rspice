@@ -109,3 +109,33 @@ pub fn getmsg(option: &str, lenout: i32) -> SpiceResult<String> {
     s_err!(cspice_sys::getmsg_c(o.as_cs(), b, c.as_cs()));
     s_ok!(c.try_into().unwrap())
 }
+
+pub fn bodc2n(code: i32, lenout: i32) -> SpiceResult<Option<String>> {
+    if lenout >= 2 {
+        let mut o = SString::with_size(lenout);
+        let mut found = 0_i32;
+        s_err!(cspice_sys::bodc2n_c(code, lenout, o.as_cs(), &mut found));
+        s_ok!(if found != 0 {
+            use std::convert::TryInto;
+            Some(o.try_into().unwrap())
+        } else {
+            None
+        })
+    } else {
+        s_err!(cspice_sys::bodc2n_c(
+            code,
+            lenout,
+            std::ptr::null_mut(),
+            std::ptr::null_mut()
+        ));
+        unreachable!()
+    }
+}
+
+pub fn bodn2c(name: &str) -> SpiceResult<Option<i32>> {
+    let mut n = SString::new(name.as_bytes());
+    let mut code = 0_i32;
+    let mut found = 0_i32;
+    s_err!(cspice_sys::bodn2c_c(n.as_cs(), &mut code, &mut found));
+    s_ok!(if found != 0 { Some(code) } else { None })
+}

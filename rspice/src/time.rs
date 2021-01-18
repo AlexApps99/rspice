@@ -13,3 +13,21 @@ pub fn str2et(date: &str) -> SpiceResult<f64> {
     s_err!(cspice_sys::str2et_c(u.as_cs(), &mut o));
     s_ok!(o)
 }
+
+pub fn timout(et: f64, pictur: &str, lenout: i32) -> SpiceResult<String> {
+    let mut p = SString::new(pictur.as_bytes());
+    if lenout >= 2 {
+        let mut o = SString::with_size(lenout);
+        s_err!(cspice_sys::timout_c(et, p.as_cs(), o.len(), o.as_cs()));
+        use std::convert::TryInto;
+        s_ok!(o.try_into().unwrap())
+    } else {
+        s_err!(cspice_sys::timout_c(
+            et,
+            p.as_cs(),
+            lenout,
+            std::ptr::null_mut()
+        ));
+        unreachable!()
+    }
+}
