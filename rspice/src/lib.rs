@@ -3,6 +3,15 @@ pub(crate) mod helper;
 use helper::SString;
 use std::convert::TryInto;
 
+mod kernel;
+pub use kernel::*;
+
+mod time;
+pub use time::*;
+
+mod pck;
+pub use pck::*;
+
 #[cfg(feature = "error")]
 #[derive(Debug, Clone)]
 pub struct SpiceError {
@@ -99,55 +108,4 @@ pub fn getmsg(option: &str, lenout: i32) -> SpiceResult<String> {
     };
     s_err!(cspice_sys::getmsg_c(o.as_cs(), b, c.as_cs()));
     s_ok!(c.try_into().unwrap())
-}
-
-pub fn furnsh(file: &str) -> SpiceResult<()> {
-    let mut f = SString::new(file.as_bytes());
-    s_errn!(cspice_sys::furnsh_c(f.as_cs()))
-}
-
-pub fn unload(file: &str) -> SpiceResult<()> {
-    let mut f = SString::new(file.as_bytes());
-    s_errn!(cspice_sys::unload_c(f.as_cs()))
-}
-
-pub fn pxform(from: &str, to: &str, et: f64) -> SpiceResult<[[f64; 3]; 3]> {
-    let mut f = SString::new(from.as_bytes());
-    let mut t = SString::new(to.as_bytes());
-    let mut o = [[0.0_f64; 3]; 3];
-
-    s_err!(cspice_sys::pxform_c(
-        f.as_cs(),
-        t.as_cs(),
-        et,
-        o.as_mut_ptr()
-    ));
-    s_ok!(o)
-}
-
-pub fn sxform(from: &str, to: &str, et: f64) -> SpiceResult<[[f64; 6]; 6]> {
-    let mut f = SString::new(from.as_bytes());
-    let mut t = SString::new(to.as_bytes());
-    let mut o = [[0.0_f64; 6]; 6];
-
-    s_err!(cspice_sys::sxform_c(
-        f.as_cs(),
-        t.as_cs(),
-        et,
-        o.as_mut_ptr()
-    ));
-    s_ok!(o)
-}
-
-pub fn unitim(epoch: f64, insys: &str, outsys: &str) -> SpiceResult<f64> {
-    let mut i = SString::new(insys.as_bytes());
-    let mut o = SString::new(outsys.as_bytes());
-    s_errn!(cspice_sys::unitim_c(epoch, i.as_cs(), o.as_cs()))
-}
-
-pub fn utc2et(utcstr: &str) -> SpiceResult<f64> {
-    let mut u = SString::new(utcstr.as_bytes());
-    let mut o = 0.0_f64;
-    s_err!(cspice_sys::utc2et_c(u.as_cs(), &mut o));
-    s_ok!(o)
 }

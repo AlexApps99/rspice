@@ -13,7 +13,7 @@ fn spice_e() -> Result<(), rspice::SpiceError> {
     rspice::erract("SET", 0, Some("RETURN"))?;
     rspice::errdev("SET", 0, Some("NULL"))?;
     rspice::furnsh("kernels/all.tm")?;
-    let et = rspice::utc2et("2021-01-01T00:00:00")?;
+    let et = rspice::str2et("2021-01-01T00:00:00")?;
     let tdt = rspice::unitim(et, "ET", "TDT")?;
     let m = rspice::pxform("IAU_EARTH", "IAU_MOON", et)?;
     let m = nalgebra::Matrix3::from_row_slice(unsafe {
@@ -28,7 +28,7 @@ fn spice_e() -> Result<(), rspice::SpiceError> {
 fn spice_n() {
     rspice::erract("SET", 0, Some("ABORT"));
     rspice::furnsh("kernels/all.tm");
-    let et = rspice::utc2et("2021-01-01T00:00:00");
+    let et = rspice::str2et("2021-01-01T00:00:00");
     let tdt = rspice::unitim(et, "ET", "TDT");
     let m = rspice::pxform("IAU_EARTH", "IAU_MOON", et);
     let m = nalgebra::Matrix3::from_row_slice(unsafe {
